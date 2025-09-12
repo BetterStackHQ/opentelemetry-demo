@@ -14,7 +14,6 @@ from locust_plugins.users.playwright import PlaywrightUser, pw, PageWithRetry, e
 
 from openfeature import api
 from openfeature.contrib.provider.ofrep import OFREPProvider
-from openfeature.contrib.hook.opentelemetry import TracingHook
 
 from playwright.async_api import Route, Request
 
