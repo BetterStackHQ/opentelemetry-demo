@@ -60,25 +60,32 @@ class WebsiteUser(HttpUser):
     wait_time = between(1, 10)
     
     def on_start(self):
-        # Disable keep-alive to prevent connection reuse
-        self.client.headers.update({"Connection": "close"})
         session_id = str(uuid.uuid4())
         logging.info(f"Starting user session: {session_id}")
         self.index()
+    
+    def reset_connection(self):
+        """Force a new connection by closing the existing session pool"""
+        # Close all adapters in the session to force new connections
+        self.client.close()
+        # Locust will automatically create a new session on next request
 
     @task(1)
     def index(self):
+        self.reset_connection()
         logging.info("User accessing index page")
         self.client.get("/")
 
     @task(10)
     def browse_product(self):
+        self.reset_connection()
         product = random.choice(products)
         logging.info(f"User browsing product: {product}")
         self.client.get("/api/products/" + product)
 
     @task(3)
     def get_recommendations(self):
+        self.reset_connection()
         product = random.choice(products)
         logging.info(f"User getting recommendations for product: {product}")
         params = {
@@ -88,6 +95,7 @@ class WebsiteUser(HttpUser):
 
     @task(3)
     def get_ads(self):
+        self.reset_connection()
         category = random.choice(categories)
         logging.info(f"User getting ads for category: {category}")
         params = {
@@ -97,11 +105,13 @@ class WebsiteUser(HttpUser):
 
     @task(3)
     def view_cart(self):
+        self.reset_connection()
         logging.info("User viewing cart")
         self.client.get("/api/cart")
 
     @task(2)
     def add_to_cart(self, user=""):
+        # Don't reset connection here since this is called by other tasks
         if user == "":
             user = str(uuid.uuid1())
         product = random.choice(products)
@@ -119,6 +129,7 @@ class WebsiteUser(HttpUser):
 
     @task(1)
     def checkout(self):
+        self.reset_connection()
         user = str(uuid.uuid1())
         self.add_to_cart(user=user)
         checkout_person = random.choice(people)
@@ -128,6 +139,7 @@ class WebsiteUser(HttpUser):
 
     @task(1)
     def checkout_multi(self):
+        self.reset_connection()
         user = str(uuid.uuid1())
         item_count = random.choice([2, 3, 4])
         for i in range(item_count):
@@ -139,6 +151,7 @@ class WebsiteUser(HttpUser):
 
     @task(5)
     def flood_home(self):
+        self.reset_connection()
         flood_count = get_flagd_value("loadGeneratorFloodHomepage")
         if flood_count > 0:
             logging.info(f"User flooding homepage {flood_count} times")
