@@ -2,12 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use core::fmt;
-use opentelemetry::global;
-use opentelemetry_instrumentation_actix_web::ClientExt;
 use std::{collections::HashMap, env};
 
 use anyhow::{Context, Result};
-use opentelemetry::{trace::get_active_span, KeyValue};
 use tracing::info;
 
 use super::shipping_types::Quote;
@@ -21,19 +18,7 @@ pub async fn create_quote_from_count(count: u32) -> Result<Quote, tonic::Status>
         }
     };
 
-    let meter = global::meter("otel_demo.shipping.quote");
-    let counter = meter.u64_counter("app.shipping.items_count").build();
-    counter.add(count as u64, &[]);
-
-    Ok(get_active_span(|span| {
-        let q = create_quote_from_float(f);
-        span.add_event(
-            "Received Quote".to_string(),
-            vec![KeyValue::new("app.shipping.cost.total", format!("{}", q))],
-        );
-        span.set_attribute(KeyValue::new("app.shipping.cost.total", format!("{}", q)));
-        q
-    }))
+    Ok(create_quote_from_float(f))
 }
 
 async fn request_quote(count: u32) -> Result<f64, anyhow::Error> {
@@ -58,7 +43,6 @@ async fn request_quote(count: u32) -> Result<f64, anyhow::Error> {
 
     let mut response = client
         .post(quote_service_addr)
-        .trace_request()
         .send_json(&reqbody)
         .await
         .map_err(|err| anyhow::anyhow!("Failed to call quote service: {err}"))?;
