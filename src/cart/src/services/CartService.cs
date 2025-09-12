@@ -32,7 +32,7 @@ public class CartService : Oteldemo.CartService.CartServiceBase
 
             return Empty;
         }
-        catch (RpcException ex)
+        catch (RpcException)
         {
             throw;
         }
@@ -46,7 +46,7 @@ public class CartService : Oteldemo.CartService.CartServiceBase
 
             return cart;
         }
-        catch (RpcException ex)
+        catch (RpcException)
         {
             throw;
         }
@@ -65,7 +65,7 @@ public class CartService : Oteldemo.CartService.CartServiceBase
                 await _cartStore.EmptyCartAsync(request.UserId);
             }
         }
-        catch (RpcException ex)
+        catch (RpcException)
         {
             throw;
         }
