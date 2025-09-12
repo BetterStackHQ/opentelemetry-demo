@@ -5,7 +5,6 @@ using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 using Oteldemo;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 
 namespace Accounting;
 
@@ -32,7 +31,6 @@ internal class Consumer : IDisposable
     private IConsumer<string, byte[]> _consumer;
     private bool _isListening;
     private DBContext? _dbContext;
-    private static readonly ActivitySource MyActivitySource = new("Accounting.Consumer");
 
     public Consumer(ILogger<Consumer> logger)
     {
@@ -58,7 +56,6 @@ internal class Consumer : IDisposable
             {
                 try
                 {
-                    using var activity = MyActivitySource.StartActivity("order-consumed",  ActivityKind.Internal);
                     var consumeResult = _consumer.Consume();
                     ProcessMessage(consumeResult.Message);
                 }
