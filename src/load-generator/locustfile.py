@@ -58,6 +58,13 @@ people = json.load(people_file)
 
 class WebsiteUser(HttpUser):
     wait_time = between(1, 10)
+    
+    def on_start(self):
+        # Disable keep-alive to prevent connection reuse
+        self.client.headers.update({"Connection": "close"})
+        session_id = str(uuid.uuid4())
+        logging.info(f"Starting user session: {session_id}")
+        self.index()
 
     @task(1)
     def index(self):
@@ -137,11 +144,6 @@ class WebsiteUser(HttpUser):
             logging.info(f"User flooding homepage {flood_count} times")
             for _ in range(0, flood_count):
                 self.client.get("/")
-
-    def on_start(self):
-        session_id = str(uuid.uuid4())
-        logging.info(f"Starting user session: {session_id}")
-        self.index()
 
 
 browser_traffic_enabled = os.environ.get("LOCUST_BROWSER_TRAFFIC_ENABLED", "").lower() in ("true", "yes", "on")
