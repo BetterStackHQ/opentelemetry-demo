@@ -12,8 +12,7 @@ RUN printf "%s%s%s%s\n" \
     "/main" \
     | tee -a /etc/apk/repositories
 
-RUN apk update && \
-    apk add nginx-module-otel@nginx
+RUN apk update
 
 USER 101
 
@@ -25,4 +24,4 @@ EXPOSE ${IMAGE_PROVIDER_PORT}
 STOPSIGNAL SIGQUIT
 
 # Start nginx
-CMD ["/bin/sh" , "-c" , "envsubst '$OTEL_COLLECTOR_HOST $IMAGE_PROVIDER_PORT $OTEL_COLLECTOR_PORT_GRPC $OTEL_SERVICE_NAME' < /nginx.conf.template > /etc/nginx/nginx.conf && cat  /etc/nginx/nginx.conf && exec nginx -g 'daemon off;'"]
+CMD ["/bin/sh" , "-c" , "envsubst '$IMAGE_PROVIDER_PORT' < /nginx.conf.template > /etc/nginx/nginx.conf && cat  /etc/nginx/nginx.conf && exec nginx -g 'daemon off;'"]

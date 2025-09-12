@@ -291,16 +291,9 @@ services:
       - IMAGE_PROVIDER_PORT
       - ENVOY_PORT
       - FLAGD_HOST
-      - FLAGD_PORT
-      - FLAGD_UI_HOST
-      - FLAGD_UI_PORT
-    depends_on:
-      frontend:
-        condition: service_started
-      load-generator:
-        condition: service_started
-      flagd-ui:
-        condition: service_started
+       - FLAGD_PORT
+       - FLAGD_UI_HOST
+       - FLAGD_UI_PORT
     dns_search: ""
 
   # image-provider
@@ -323,7 +316,7 @@ services:
       - IMAGE_PROVIDER_PORT
     logging: *logging
 
-  # Load Generator
+   # Load Generator
   load-generator:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-load-generator
     container_name: load-generator
@@ -341,11 +334,11 @@ services:
       - "${LOCUST_WEB_PORT}"
     environment:
       - LOCUST_WEB_PORT
-      - LOCUST_USERS
+      - LOCUST_USERS=1
       - LOCUST_HOST
       - LOCUST_HEADLESS
       - LOCUST_AUTOSTART
-      - LOCUST_BROWSER_TRAFFIC_ENABLED=true
+      - LOCUST_BROWSER_TRAFFIC_ENABLED=false
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
       - LOCUST_WEB_HOST=0.0.0.0
       - FLAGD_HOST
