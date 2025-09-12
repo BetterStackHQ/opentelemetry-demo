@@ -34,6 +34,8 @@ static_resources:
                       route: { cluster: flagd-ui }
                     - match: { prefix: "/" } # Default/catch-all route - keep last since prefix:"/" matches everything
                       route: { cluster: frontend }
+                generate_request_id: false
+                preserve_external_request_id: false
                 http_filters:
                 - name: envoy.filters.http.fault
                   typed_config:
