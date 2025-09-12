@@ -12,7 +12,6 @@ COPY ./src/recommendation/requirements.txt requirements.txt
 RUN python -m venv venv && \
     venv/bin/pip install --no-cache-dir -r requirements.txt
 
-RUN venv/bin/opentelemetry-bootstrap -a install
 
 FROM docker.io/library/python:3.12-alpine3.22
 
@@ -27,4 +26,4 @@ COPY ./src/recommendation/metrics.py metrics.py
 COPY ./src/recommendation/recommendation_server.py recommendation_server.py
 
 EXPOSE ${RECOMMENDATION_PORT}
-ENTRYPOINT [ "/venv/bin/opentelemetry-instrument", "/venv/bin/python", "recommendation_server.py" ]
+ENTRYPOINT [ "/venv/bin/python", "recommendation_server.py" ]

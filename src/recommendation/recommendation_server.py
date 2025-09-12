@@ -17,6 +17,7 @@ from openfeature.contrib.provider.flagd import FlagdProvider
 
 # Local
 import logging
+import sys
 import demo_pb2
 import demo_pb2_grpc
 from grpc_health.v1 import health_pb2
@@ -28,7 +29,8 @@ first_run = True
 class RecommendationService(demo_pb2_grpc.RecommendationServiceServicer):
     def ListRecommendations(self, request, context):
         prod_list = get_product_list(request.product_ids)
-        logging.info(f"Receive ListRecommendations for product ids:{prod_list}")
+        logger = logging.getLogger('main')
+        logger.info(f"Receive ListRecommendations for product ids:{prod_list}")
 
         # build and return response
         response = demo_pb2.ListRecommendationsResponse()
@@ -58,14 +60,16 @@ def get_product_list(request_product_ids):
     if check_feature_flag("recommendationCacheFailure"):
         if random.random() < 0.5 or first_run:
             first_run = False
-            logging.info("get_product_list: cache miss")
+            logger = logging.getLogger('main')
+            logger.info("get_product_list: cache miss")
             cat_response = product_catalog_stub.ListProducts(demo_pb2.Empty())
             response_ids = [x.id for x in cat_response.products]
             cached_ids = cached_ids + response_ids
             cached_ids = cached_ids + cached_ids[:len(cached_ids) // 4]
             product_ids = cached_ids
         else:
-            logging.info("get_product_list: cache hit")
+            logger = logging.getLogger('main')
+            logger.info("get_product_list: cache hit")
             product_ids = cached_ids
     else:
         cat_response = product_catalog_stub.ListProducts(demo_pb2.Empty())
@@ -98,10 +102,15 @@ def check_feature_flag(flag_name: str):
 
 
 if __name__ == "__main__":
-    api.set_provider(FlagdProvider(host=os.environ.get('FLAGD_HOST', 'flagd'), port=os.environ.get('FLAGD_PORT', 8013)))
-
-    # Attach handler to logger
+    # Configure logging
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        stream=sys.stdout
+    )
     logger = logging.getLogger('main')
+    
+    api.set_provider(FlagdProvider(host=os.environ.get('FLAGD_HOST', 'flagd'), port=os.environ.get('FLAGD_PORT', 8013)))
 
     catalog_addr = must_map_env('PRODUCT_CATALOG_ADDR')
     pc_channel = grpc.insecure_channel(catalog_addr)
