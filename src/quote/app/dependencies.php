@@ -8,8 +8,6 @@ declare(strict_types=1);
 
 use App\Application\Settings\SettingsInterface;
 use DI\ContainerBuilder;
-use OpenTelemetry\API\Globals;
-use OpenTelemetry\Contrib\Logs\Monolog\Handler;
 use Monolog\Logger;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -20,11 +18,7 @@ return function (ContainerBuilder $containerBuilder) {
         LoggerInterface::class => function (ContainerInterface $c) {
             $settings = $c->get(SettingsInterface::class);
             $loggerSettings = $settings->get('logger');
-            $handler = new Handler(
-                Globals::loggerProvider(),
-                LogLevel::INFO,
-            );
-            return new Logger($loggerSettings['name'], [$handler]);
+            return new Logger($loggerSettings['name']);
         },
     ]);
 };

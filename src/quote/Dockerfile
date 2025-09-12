@@ -22,7 +22,7 @@ FROM docker.io/library/php:8.4-cli-alpine3.22
 
 COPY --from=installer /usr/bin/install-php-extensions /usr/local/bin/
 
-RUN install-php-extensions opcache pcntl protobuf opentelemetry
+RUN install-php-extensions opcache pcntl protobuf
 
 WORKDIR /var/www
 
