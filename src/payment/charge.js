@@ -1,6 +1,5 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
-const { context, propagation, trace, metrics } = require('@opentelemetry/api');
 const cardValidator = require('simple-card-validator');
 const { v4: uuidv4 } = require('uuid');
 
@@ -9,9 +8,6 @@ const { FlagdProvider } = require('@openfeature/flagd-provider');
 const flagProvider = new FlagdProvider();
 
 const logger = require('./logger');
-const tracer = trace.getTracer('payment');
-const meter = metrics.getMeter('payment');
-const transactionsCounter = meter.createCounter('app.payment.transactions');
 
 const LOYALTY_LEVEL = ['platinum', 'gold', 'silver', 'bronze'];
 
@@ -22,7 +18,6 @@ function random(arr) {
 }
 
 module.exports.charge = async request => {
-  const span = tracer.startSpan('charge');
 
   await OpenFeature.setProviderAndWait(flagProvider);
 
@@ -31,8 +26,6 @@ module.exports.charge = async request => {
   if (numberVariant > 0) {
     // n% chance to fail with app.loyalty.level=gold
     if (Math.random() < numberVariant) {
-      span.setAttributes({'app.loyalty.level': 'gold' });
-      span.end();
 
       throw new Error('Payment request failed. Invalid token. app.loyalty.level=gold');
     }
@@ -53,11 +46,6 @@ module.exports.charge = async request => {
 
   const loyalty_level = random(LOYALTY_LEVEL);
 
-  span.setAttributes({
-    'app.payment.card_type': cardType,
-    'app.payment.card_valid': valid,
-    'app.loyalty.level': loyalty_level
-  });
 
   if (!valid) {
     throw new Error('Credit card info is invalid.');
@@ -71,18 +59,9 @@ module.exports.charge = async request => {
     throw new Error(`The credit card (ending ${lastFourDigits}) expired on ${month}/${year}.`);
   }
 
-  // Check baggage for synthetic_request=true, and add charged attribute accordingly
-  const baggage = propagation.getBaggage(context.active());
-  if (baggage && baggage.getEntry('synthetic_request') && baggage.getEntry('synthetic_request').value === 'true') {
-    span.setAttribute('app.payment.charged', false);
-  } else {
-    span.setAttribute('app.payment.charged', true);
-  }
 
   const { units, nanos, currencyCode } = request.amount;
   logger.info({ transactionId, cardType, lastFourDigits, amount: { units, nanos, currencyCode }, loyalty_level }, 'Transaction complete.');
-  transactionsCounter.add(1, { 'app.payment.currency': currencyCode });
-  span.end();
 
   return { transactionId };
 };
