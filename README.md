@@ -18,6 +18,12 @@
 curl -fsSL https://raw.githubusercontent.com/BetterStackHQ/opentelemetry-demo/main/install.sh | bash
 ```
 
+### Kubernetes
+
+```bash
+kubectl apply -f kubernetes/opentelemetry-demo.yaml
+```
+
 ## Welcome to the OpenTelemetry Astronomy Shop Demo
 
 This repository contains the OpenTelemetry Astronomy Shop, a microservice-based
