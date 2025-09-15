@@ -393,8 +393,6 @@ services:
       - FLAGD_HOST
       - FLAGD_PORT
       - GOMEMLIMIT=16MiB
-    volumes:
-      - ./src/product-catalog/products:/usr/src/app/products
     depends_on:
       flagd:
         condition: service_started

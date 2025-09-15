@@ -61,15 +61,38 @@ if ! curl -fsSL "${ENV_FILE_URL}" -o .env; then
 fi
 echo -e "${GREEN}✓${NC} Downloaded .env file"
 
-# Pull images
-echo ""
-echo -e "${YELLOW}→${NC} Pulling Docker images (this may take a few minutes)..."
-${DOCKER_COMPOSE} -p "${PROJECT_NAME}" pull
+# Download required data files
+echo -e "${YELLOW}→${NC} Downloading required data files..."
 
-# Start containers
+# Create directories
+mkdir -p src/flagd src/postgres
+
+# Download flagd configuration
+if ! curl -fsSL "https://raw.githubusercontent.com/${GITHUB_REPO}/${BRANCH}/src/flagd/demo.flagd.json" -o src/flagd/demo.flagd.json; then
+    echo -e "${RED}Error: Failed to download flagd configuration${NC}"
+    exit 1
+fi
+echo -e "${GREEN}✓${NC} Downloaded flagd configuration"
+
+# Download postgres init script
+if ! curl -fsSL "https://raw.githubusercontent.com/${GITHUB_REPO}/${BRANCH}/src/postgres/init.sql" -o src/postgres/init.sql; then
+    echo -e "${RED}Error: Failed to download postgres init script${NC}"
+    exit 1
+fi
+echo -e "${GREEN}✓${NC} Downloaded postgres init script"
+
+# Start containers with pull
 echo ""
-echo -e "${YELLOW}→${NC} Starting containers..."
-${DOCKER_COMPOSE} -p "${PROJECT_NAME}" up -d
+echo -e "${YELLOW}→${NC} Pulling images and starting containers (this may take a few minutes)..."
+
+if [[ "${DOCKER_COMPOSE}" == "docker compose" ]]; then
+    # Docker Compose v2 - use --pull always flag
+    ${DOCKER_COMPOSE} -p "${PROJECT_NAME}" up -d --pull always
+else
+    # Docker Compose v1 - pull first, then up
+    ${DOCKER_COMPOSE} -p "${PROJECT_NAME}" pull
+    ${DOCKER_COMPOSE} -p "${PROJECT_NAME}" up -d
+fi
 
 # Check if containers are running
 echo ""
