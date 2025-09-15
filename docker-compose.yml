@@ -287,9 +287,9 @@ services:
       - IMAGE_PROVIDER_PORT
       - ENVOY_PORT
       - FLAGD_HOST
-       - FLAGD_PORT
-       - FLAGD_UI_HOST
-       - FLAGD_UI_PORT
+      - FLAGD_PORT
+      - FLAGD_UI_HOST
+      - FLAGD_UI_PORT
     dns_search: ""
 
   # image-provider
