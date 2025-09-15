@@ -57,6 +57,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Load environment variables
+        run: |
+          # Load .env file and export variables for build args
+          set -a
+          source .env
+          set +a
+
+          # Convert env vars to GitHub Actions format
+          {
+            echo "OPENTELEMETRY_CPP_VERSION=$OPENTELEMETRY_CPP_VERSION"
+            echo "IMAGE_VERSION=$IMAGE_VERSION"
+            echo "IMAGE_NAME=$IMAGE_NAME"
+            echo "DEMO_VERSION=$DEMO_VERSION"
+          } >> $GITHUB_ENV
+
       - name: Set up Depot
         uses: depot/setup-action@v1
 
@@ -76,5 +91,9 @@ jobs:
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DEMO_VERSION }}-${{ matrix.service.name }}
-          build-args: ${{ matrix.service.build_args }}
+          build-args: |
+            OPENTELEMETRY_CPP_VERSION=${{ env.OPENTELEMETRY_CPP_VERSION }}
+            IMAGE_VERSION=${{ env.IMAGE_VERSION }}
+            IMAGE_NAME=${{ env.IMAGE_NAME }}
+            DEMO_VERSION=${{ env.DEMO_VERSION }}
           platforms: linux/amd64,linux/arm64
