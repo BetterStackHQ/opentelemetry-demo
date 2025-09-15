@@ -45,6 +45,9 @@ echo -e "${YELLOW}→${NC} Creating working directory: ${WORK_DIR}"
 mkdir -p "${WORK_DIR}"
 cd "${WORK_DIR}"
 
+# Clear working directory
+rm -rf "${WORK_DIR:?}/*"
+
 # Download docker-compose.yml
 echo -e "${YELLOW}→${NC} Downloading docker-compose.yml..."
 if ! curl -fsSL "${COMPOSE_FILE_URL}" -o docker-compose.yml; then
