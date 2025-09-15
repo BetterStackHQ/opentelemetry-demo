@@ -1,0 +1,80 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: betterstack/opentelemetry-demo
+  DEMO_VERSION: latest
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - name: accounting
+            dockerfile: ./src/accounting/Dockerfile
+          - name: ad
+            dockerfile: ./src/ad/Dockerfile
+          - name: cart
+            dockerfile: ./src/cart/src/Dockerfile
+          - name: checkout
+            dockerfile: ./src/checkout/Dockerfile
+          - name: currency
+            dockerfile: ./src/currency/Dockerfile
+          - name: email
+            dockerfile: ./src/email/Dockerfile
+          - name: fraud-detection
+            dockerfile: ./src/fraud-detection/Dockerfile
+          - name: frontend
+            dockerfile: ./src/frontend/Dockerfile
+          - name: frontend-proxy
+            dockerfile: ./src/frontend-proxy/Dockerfile
+          - name: image-provider
+            dockerfile: ./src/image-provider/Dockerfile
+          - name: load-generator
+            dockerfile: ./src/load-generator/Dockerfile
+          - name: payment
+            dockerfile: ./src/payment/Dockerfile
+          - name: product-catalog
+            dockerfile: ./src/product-catalog/Dockerfile
+          - name: quote
+            dockerfile: ./src/quote/Dockerfile
+          - name: recommendation
+            dockerfile: ./src/recommendation/Dockerfile
+          - name: shipping
+            dockerfile: ./src/shipping/Dockerfile
+          - name: flagd-ui
+            dockerfile: ./src/flagd-ui/Dockerfile
+          - name: kafka
+            dockerfile: ./src/kafka/Dockerfile
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Depot
+        uses: depot/setup-action@v1
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: depot/build-push-action@v1
+        with:
+          project: ${{ secrets.DEPOT_PROJECT_ID }}
+          token: ${{ secrets.DEPOT_API_TOKEN }}
+          context: .
+          file: ${{ matrix.service.dockerfile }}
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DEMO_VERSION }}-${{ matrix.service.name }}
+          build-args: ${{ matrix.service.build_args }}
+          platforms: linux/amd64,linux/arm64
