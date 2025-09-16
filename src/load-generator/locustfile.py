@@ -167,7 +167,6 @@ if browser_traffic_enabled:
 
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
-            self.tracer = trace.get_tracer(__name__)
 
         @task
         @pw
