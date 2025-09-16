@@ -11,6 +11,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: opentelemetry-demo
+  namespace: otel-demo
   labels:
     app.kubernetes.io/version: 2.0.2
     app.kubernetes.io/part-of: opentelemetry-demo
@@ -301,6 +302,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ad
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: ad
     app.kubernetes.io/component: ad
@@ -320,6 +322,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: cart
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: cart
     app.kubernetes.io/component: cart
@@ -339,6 +342,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: checkout
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: checkout
     app.kubernetes.io/component: checkout
@@ -358,6 +362,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: currency
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: currency
     app.kubernetes.io/component: currency
@@ -377,6 +382,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: email
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: email
     app.kubernetes.io/component: email
@@ -396,6 +402,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: flagd
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: flagd
     app.kubernetes.io/component: flagd
@@ -421,6 +428,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: frontend
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: frontend
     app.kubernetes.io/component: frontend
@@ -440,6 +448,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: frontend-proxy
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: frontend-proxy
     app.kubernetes.io/component: frontend-proxy
@@ -459,6 +468,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: image-provider
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: image-provider
     app.kubernetes.io/component: image-provider
@@ -478,6 +488,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: kafka
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: kafka
     app.kubernetes.io/component: kafka
@@ -500,6 +511,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: load-generator
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: load-generator
     app.kubernetes.io/component: load-generator
@@ -519,6 +531,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: payment
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: payment
     app.kubernetes.io/component: payment
@@ -538,6 +551,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: product-catalog
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: product-catalog
     app.kubernetes.io/component: product-catalog
@@ -557,6 +571,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: quote
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: quote
     app.kubernetes.io/component: quote
@@ -576,6 +591,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: recommendation
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: recommendation
     app.kubernetes.io/component: recommendation
@@ -595,6 +611,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: shipping
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: shipping
     app.kubernetes.io/component: shipping
@@ -614,6 +631,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: valkey-cart
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: valkey-cart
     app.kubernetes.io/component: valkey-cart
@@ -633,6 +651,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: accounting
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: accounting
     app.kubernetes.io/component: accounting
@@ -677,6 +696,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ad
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: ad
     app.kubernetes.io/component: ad
@@ -721,6 +741,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cart
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: cart
     app.kubernetes.io/component: cart
@@ -777,6 +798,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: checkout
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: checkout
     app.kubernetes.io/component: checkout
@@ -842,6 +864,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: currency
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: currency
     app.kubernetes.io/component: currency
@@ -884,6 +907,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: email
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: email
     app.kubernetes.io/component: email
@@ -916,6 +940,10 @@ spec:
           value: '8080'
         - name: APP_ENV
           value: production
+        - name: FLAGD_HOST
+          value: flagd
+        - name: FLAGD_PORT
+          value: '8013'
         resources:
           limits:
             memory: 100Mi
@@ -926,6 +954,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: flagd
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: flagd
     app.kubernetes.io/component: flagd
@@ -976,7 +1005,7 @@ spec:
         - name: config-rw
           mountPath: "/etc/flagd"
       - name: flagd-ui
-        image: betterstack/opentelemetry-demo:latest-flagd
+        image: betterstack/opentelemetry-demo:latest-flagd-ui
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 4000
@@ -1013,6 +1042,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: fraud-detection
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: fraud-detection
     app.kubernetes.io/component: fraud-detection
@@ -1061,6 +1091,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: frontend
     app.kubernetes.io/component: frontend
@@ -1129,6 +1160,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend-proxy
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: frontend-proxy
     app.kubernetes.io/component: frontend-proxy
@@ -1201,6 +1233,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: image-provider
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: image-provider
     app.kubernetes.io/component: image-provider
@@ -1241,6 +1274,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kafka
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: kafka
     app.kubernetes.io/component: kafka
@@ -1273,6 +1307,12 @@ spec:
         env:
         - name: KAFKA_ADVERTISED_LISTENERS
           value: PLAINTEXT://kafka:9092
+        - name: KAFKA_LISTENERS
+          value: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+        - name: KAFKA_CONTROLLER_QUORUM_VOTERS
+          value: 1@kafka:9093
+        - name: KAFKA_NODE_ID
+          value: "1"
         - name: KAFKA_HEAP_OPTS
           value: "-Xmx400M -Xms400M"
         resources:
@@ -1289,6 +1329,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: load-generator
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: load-generator
     app.kubernetes.io/component: load-generator
@@ -1349,6 +1390,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: payment
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: payment
     app.kubernetes.io/component: payment
@@ -1397,6 +1439,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: product-catalog
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: product-catalog
     app.kubernetes.io/component: product-catalog
@@ -1448,6 +1491,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: quote
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: quote
     app.kubernetes.io/component: quote
@@ -1492,6 +1536,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: recommendation
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: recommendation
     app.kubernetes.io/component: recommendation
@@ -1540,6 +1585,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: shipping
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: shipping
     app.kubernetes.io/component: shipping
@@ -1582,6 +1628,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: valkey-cart
+  namespace: otel-demo
   labels:
     opentelemetry.io/name: valkey-cart
     app.kubernetes.io/component: valkey-cart
