@@ -1025,7 +1025,10 @@ spec:
       - command:
         - sh
         - "-c"
-        - cp /config-ro/demo.flagd.json /config-rw/demo.flagd.json && cat /config-rw/demo.flagd.json
+        - |
+          cp /config-ro/demo.flagd.json /config-rw/demo.flagd.json
+          chmod 666 /config-rw/demo.flagd.json
+          cat /config-rw/demo.flagd.json
         image: busybox
         name: init-config
         volumeMounts:
