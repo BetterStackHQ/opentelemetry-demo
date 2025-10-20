@@ -1208,18 +1208,10 @@ spec:
           value: frontend
         - name: FRONTEND_PORT
           value: '8080'
-        - name: GRAFANA_HOST
-          value: grafana
-        - name: GRAFANA_PORT
-          value: '80'
         - name: IMAGE_PROVIDER_HOST
           value: image-provider
         - name: IMAGE_PROVIDER_PORT
           value: '8081'
-        - name: JAEGER_HOST
-          value: jaeger-query
-        - name: JAEGER_PORT
-          value: '16686'
         - name: LOCUST_WEB_HOST
           value: load-generator
         - name: LOCUST_WEB_PORT
@@ -1717,7 +1709,14 @@ spec:
         opentelemetry.io/name: postgresql
     spec:
       containers:
-      - env:
+      - args:
+        - "-c"
+        - shared_preload_libraries=pg_stat_statements
+        - "-c"
+        - pg_stat_statements.max=10000
+        - "-c"
+        - pg_stat_statements.track=all
+        env:
         - name: POSTGRES_USER
           value: root
         - name: POSTGRES_PASSWORD
@@ -1733,6 +1732,10 @@ spec:
         resources:
           limits:
             memory: 200Mi
+        securityContext:
+          runAsUser: 999
+          runAsGroup: 999
+          runAsNonRoot: true
         volumeMounts:
         - name: postgres-init
           mountPath: /docker-entrypoint-initdb.d
@@ -1785,3 +1788,7 @@ data:
     );
     
     GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO otelu;
+
+    CREATE ROLE betterstack WITH LOGIN PASSWORD 'betterstack';
+    GRANT pg_monitor TO betterstack;
+    CREATE EXTENSION pg_stat_statements;
