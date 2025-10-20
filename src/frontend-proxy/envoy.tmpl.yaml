@@ -60,8 +60,8 @@ static_resources:
               - endpoint:
                   address:
                     socket_address:
-                      address: frontend
-                      port_value: 8080
+                      address: ${FRONTEND_HOST}
+                      port_value: ${FRONTEND_PORT}
     - name: image-provider
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
@@ -72,8 +72,8 @@ static_resources:
               - endpoint:
                   address:
                     socket_address:
-                      address: image-provider
-                      port_value: 8081
+                      address: ${IMAGE_PROVIDER_HOST}
+                      port_value: ${IMAGE_PROVIDER_PORT}
     - name: flagservice
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
@@ -84,8 +84,8 @@ static_resources:
               - endpoint:
                   address:
                     socket_address:
-                      address: flagd
-                      port_value: 8013
+                      address: ${FLAGD_HOST}
+                      port_value: ${FLAGD_PORT}
     - name: flagd-ui
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
@@ -96,8 +96,8 @@ static_resources:
               - endpoint:
                   address:
                     socket_address:
-                      address: flagd-ui
-                      port_value: 4000
+                      address: ${FLAGD_UI_HOST}
+                      port_value: ${FLAGD_UI_PORT}
     - name: loadgen
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
@@ -108,8 +108,8 @@ static_resources:
               - endpoint:
                   address:
                     socket_address:
-                      address: load-generator
-                      port_value: 8089
+                      address: ${LOCUST_WEB_HOST}
+                      port_value: ${LOCUST_WEB_PORT}
 admin:
   address:
     socket_address:
