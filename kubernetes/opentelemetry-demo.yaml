@@ -1208,18 +1208,10 @@ spec:
           value: frontend
         - name: FRONTEND_PORT
           value: '8080'
-        - name: GRAFANA_HOST
-          value: grafana
-        - name: GRAFANA_PORT
-          value: '80'
         - name: IMAGE_PROVIDER_HOST
           value: image-provider
         - name: IMAGE_PROVIDER_PORT
           value: '8081'
-        - name: JAEGER_HOST
-          value: jaeger-query
-        - name: JAEGER_PORT
-          value: '16686'
         - name: LOCUST_WEB_HOST
           value: load-generator
         - name: LOCUST_WEB_PORT
