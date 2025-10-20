@@ -1717,7 +1717,14 @@ spec:
         opentelemetry.io/name: postgresql
     spec:
       containers:
-      - env:
+      - args:
+        - "-c"
+        - shared_preload_libraries=pg_stat_statements
+        - "-c"
+        - pg_stat_statements.max=10000
+        - "-c"
+        - pg_stat_statements.track=all
+        env:
         - name: POSTGRES_USER
           value: root
         - name: POSTGRES_PASSWORD
@@ -1733,6 +1740,10 @@ spec:
         resources:
           limits:
             memory: 200Mi
+        securityContext:
+          runAsUser: 999
+          runAsGroup: 999
+          runAsNonRoot: true
         volumeMounts:
         - name: postgres-init
           mountPath: /docker-entrypoint-initdb.d
@@ -1785,3 +1796,7 @@ data:
     );
     
     GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO otelu;
+
+    CREATE ROLE betterstack WITH LOGIN PASSWORD 'betterstack';
+    GRANT pg_monitor TO betterstack;
+    CREATE EXTENSION pg_stat_statements;
