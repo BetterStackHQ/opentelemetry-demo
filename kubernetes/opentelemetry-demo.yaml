@@ -104,7 +104,7 @@ data:
             "10%": 0.1,
             "off": 0
           },
-          "defaultVariant": "off"
+          "defaultVariant": "50%"
         },
         "paymentUnreachable": {
           "description": "Payment service is unavailable",
@@ -132,7 +132,7 @@ data:
             "5sec": 5000,
             "off": 0
           },
-          "defaultVariant": "off"
+          "defaultVariant": "5sec"
         }
       }
     }
