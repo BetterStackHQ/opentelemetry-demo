@@ -1756,7 +1756,10 @@ data:
     -- SPDX-License-Identifier: Apache-2.0
     
     CREATE USER otelu WITH PASSWORD 'otelp';
-    
+
+    -- Create postgres database
+    CREATE DATABASE postgres;
+
     -- Create a table
     CREATE TABLE "order" (
         order_id TEXT PRIMARY KEY
@@ -1792,3 +1795,5 @@ data:
     CREATE ROLE betterstack WITH LOGIN PASSWORD 'betterstack';
     GRANT pg_monitor TO betterstack;
     CREATE EXTENSION pg_stat_statements;
+
+    GRANT CONNECT ON DATABASE postgres TO betterstack;

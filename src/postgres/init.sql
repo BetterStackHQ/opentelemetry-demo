@@ -3,6 +3,8 @@
 
 CREATE USER otelu WITH PASSWORD 'otelp';
 
+-- Create postgres database
+CREATE DATABASE postgres;
 
 -- Create a table
 CREATE TABLE "order" (
@@ -35,3 +37,9 @@ CREATE TABLE orderitem (
 );
 
 GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO otelu;
+
+CREATE ROLE betterstack WITH LOGIN PASSWORD 'betterstack';
+GRANT pg_monitor TO betterstack;
+CREATE EXTENSION pg_stat_statements;
+
+GRANT CONNECT ON DATABASE postgres TO betterstack;
