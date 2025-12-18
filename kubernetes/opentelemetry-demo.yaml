@@ -1757,9 +1757,6 @@ data:
     
     CREATE USER otelu WITH PASSWORD 'otelp';
 
-    -- Create postgres database
-    CREATE DATABASE postgres;
-
     -- Create a table
     CREATE TABLE "order" (
         order_id TEXT PRIMARY KEY
