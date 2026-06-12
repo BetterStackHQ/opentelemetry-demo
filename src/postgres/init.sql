@@ -3,9 +3,6 @@
 
 CREATE USER otelu WITH PASSWORD 'otelp';
 
--- Create postgres database
-CREATE DATABASE postgres;
-
 -- Create a table
 CREATE TABLE "order" (
     order_id TEXT PRIMARY KEY
@@ -40,6 +37,8 @@ GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO otelu;
 
 CREATE ROLE betterstack WITH LOGIN PASSWORD 'betterstack';
 GRANT pg_monitor TO betterstack;
-CREATE EXTENSION pg_stat_statements;
-
 GRANT CONNECT ON DATABASE postgres TO betterstack;
+
+-- pg_stat_statements must live in the DB the collector connects to (postgres, not otel)
+\c postgres
+CREATE EXTENSION pg_stat_statements;
